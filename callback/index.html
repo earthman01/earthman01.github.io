@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'">
+<title>Tesla OAuth callback</title>
+<style>body{font-family:system-ui,sans-serif;max-width:720px;margin:40px auto;padding:0 16px}textarea{width:100%;font-size:18px;font-family:monospace;padding:12px;box-sizing:border-box}button{font-size:20px;padding:10px 24px;margin-top:10px}.err{color:#b00}</style>
+</head><body>
+<h1>Tesla authorization</h1>
+<div id="out"></div>
+<script>
+(function(){
+ var p=new URLSearchParams(location.search),o=document.getElementById('out');
+ var code=p.get('code'),state=p.get('state'),err=p.get('error');
+ function el(t,txt,c){var e=document.createElement(t);if(txt)e.textContent=txt;if(c)e.className=c;o.appendChild(e);return e;}
+ if(err){el('p','Error: '+err+(p.get('error_description')?' - '+p.get('error_description'):''),'err');}
+ if(code){
+  el('p','Paste this code back to tesla in Grok Bot. It expires in a few minutes.');
+  var ta=el('textarea');ta.rows=4;ta.readOnly=true;ta.value=code;
+  var b=el('button','Copy');
+  b.onclick=function(){ta.select();(navigator.clipboard?navigator.clipboard.writeText(code):Promise.reject()).then(function(){b.textContent='Copied!';},function(){document.execCommand('copy');b.textContent='Copied!';});};
+  if(state)el('p','state: '+state);
+ } else if(!err){el('p','No code in URL.');}
+})();
+</script>
+</body></html>
